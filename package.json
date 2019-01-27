@@ -1,0 +1,24 @@
+{
+  "name": "davinci-slide-builder",
+  "version": "1.0.0",
+  "description": "slideshow timeline builder in Final Cut Pro XML format",
+  "main": "src/index.js",
+  "bin": {
+    "slide-builder": "cli/index.js"
+  },
+  "scripts": {
+    "test": "mocha src"
+  },
+  "author": "Moos",
+  "license": "ISC",
+  "dependencies": {
+    "array-sort": "^1.0.0",
+    "fast-glob": "^2.2.6",
+    "knuth-shuffle-seeded": "^1.0.6",
+    "yargs-parser": "^11.1.1"
+  },
+  "devDependencies": {
+    "fast-xml-parser": "^3.12.12",
+    "mocha": "^5.2.0"
+  }
+}
