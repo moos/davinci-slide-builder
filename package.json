@@ -6,6 +6,10 @@
   "bin": {
     "slide-builder": "cli/index.js"
   },
+  "files": [
+    "cli",
+    "src"
+  ],
   "scripts": {
     "test": "mocha src"
   },

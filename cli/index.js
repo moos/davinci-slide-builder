@@ -5,6 +5,7 @@ const argv = require('yargs-parser')(process.argv.slice(2), {
 });
 const fg = require('fast-glob');
 const arraySort = require('array-sort');
+const path = require('path');
 const builder = require('../src').build;
 
 const defaultIgnores = [
@@ -33,8 +34,8 @@ Options
   --transitionDuration, -t N   - duration of transition between each slide (default: 1 sec)
                                  0 for no transition.
   --randomize, -R [type]       - randomize duration of each slide (default: false)
-                                 [type] is the random distribution: linear, normal (default: linear)
-  --range, -r min,max          - range of random durations (default: 3,6 secs)
+                                 [type] is the random distribution: uniform, normal (default: uniform)
+  --range, -r min,max          - range of random durations (requires -R) (default: 3,6 secs)
   --name S                     - name of project
 
   (Use --advanced to show less-used options)
@@ -56,8 +57,11 @@ Advanced options:
                          date  - creation date
                          mdate - modified date
                          size  - file size
-                         name  - file name (default)
-                         path  - file path
+                         name  - file name, excluding path
+                         iname - file name, excluding path, case insensitive
+                         ext   - extension only
+                         path  - file path, depth first
+                       * flat  - file path, breadth first (default)
                          rand  - randomize
   --rsort [by]    - reverse sort order
   --dry-run       - just show selected files
@@ -113,23 +117,37 @@ let assets = fg.sync(argv._, {
   )
 });
 
+if (!assets.length) {
+  console.error(`No files matched for: ${argv._.join(' ')}`);
+  process.exit(1);
+}
+
 // sort
 let sort = argv.sort || argv.rsort;
 let sortMap = {
   date: 'ctime',
   mdate: 'mtime',
   size: 'size',
-  name: 'path',
+  name: 'name',  // note: this is calculated below, not returned by fstat
+  iname: 'name', // case insensitive version of name
+  ext: 'ext',
   path: 'path'
+  // flat: ['depth','path']  // default ***
 };
 
 if (sort && !options.shuffle && sortMap[sort]) {
-
-  // TODO name should sort based on filename only!
+  // calc name.ext if needed
+  if (/(name|ext)/.test(sort)) {
+    let icase = sort === 'iname' ? (a => a.toLowerCase()) : (a => a);
+    assets.forEach((a,i) => {
+      assets[i].name = icase(path.basename(a.path));
+      assets[i].ext = path.extname(a.path);
+    });
+  }
 
   assets = arraySort(assets, sortMap[sort], {
     reverse: !!argv.rsort
-  })
+  });
 }
 
 assets = assets.map(a => a.path);

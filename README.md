@@ -65,7 +65,7 @@ Options
   --transitionDuration, -t N   - duration of transition between each slide (default: 1 sec)            
                                  0 for no transition.                                                  
   --randomize, -R [type]       - randomize duration of each slide (default: false)                     
-                                 [type] is the random distribution: linear, normal (default: linear)   
+                                 [type] is the random distribution: uniform, normal (default: uniform)
   --range, -r min,max          - range of random durations (default: 3,6 secs)                        
   --name S                     - name of project                                                       
 
@@ -74,9 +74,9 @@ Options
 files... can be one or more glob patterns, e.g., "pics/slideshow/** pics/summer/**.jpg".               
 (Use --globs to show more examples)
 ```
-Note: options that are WIP: "--rand normal" and "--sort name".
 
 ### Change log
+- 1.1.0 Add `-R normal` and sort by name and extension.
 - 1.0.0 Initial version supporting fcpxml 1.8
 
 ### License

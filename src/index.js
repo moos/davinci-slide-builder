@@ -1,6 +1,7 @@
 const path = require('path');
 const tmpl = require('./tmpl');
 const shuffle = require('knuth-shuffle-seeded');
+const randNormal = require('./rand-normal');
 
 // time values in secs
 const defaultSettings = {
@@ -8,7 +9,7 @@ const defaultSettings = {
   durationFixed: 5,
   durationRange: [3,6], // min, max
   durationRand: false,
-  durationDist: 'linear',  // or 'normal'  TODO
+  durationDist: 'uniform',  // or 'normal'
   transitionDuration: 1,
   shuffle: false
 };
@@ -18,7 +19,8 @@ const timeRes = fps * 1;
 const toTC = t => Math.round(timeRes * t);
 
 const getDuration = (env) => env.durationRand ? getRandDuration(env) : toTC(env.durationFixed);
-const getRandDuration = (env) => toTC(env.durationRange[0] + Math.random()
+const randFn = (env) => env.durationDist === 'normal' ? randNormal : Math.random;
+const getRandDuration = (env) => toTC(env.durationRange[0] + randFn(env)()
                                       * (env.durationRange[1] - env.durationRange[0]));
 
 const id = () => `sb${++id.ref}`;
@@ -34,7 +36,9 @@ const line = {
   transition: (d) => `  <transition ${attrs.time(d)} />\n`
 };
 
-
+/**
+ * Main function
+ */
 function build(assets, options) {
   let env = Object.assign({}, defaultSettings, options);
   const transitionDuration = toTC(env.transitionDuration);
