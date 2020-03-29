@@ -17,7 +17,7 @@ const out1 = `<?xml version="1.0" encoding="UTF-8"?>
     </resources>
     <library>
         <event name="slideshow #1">
-            <project name="slideshow timeline">
+            <project name="slideshow-timeline-00:10.0--2-C:/Users/foo/Pictures/">
                 <sequence>
                     <spine>
 <video ref="sb1" duration="120/24s" offset="0/24s" />
