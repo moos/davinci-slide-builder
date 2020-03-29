@@ -11,12 +11,13 @@ const defaultSettings = {
   durationRand: false,
   durationDist: 'uniform',  // or 'normal'
   transitionDuration: 1,
-  shuffle: false
+  shuffle: false,
+  dryRun: false
 };
 
 const fps = 24;  // TODO input
 const timeRes = fps * 1;
-const toTC = t => Math.round(timeRes * t);
+const toTC = t => t && Math.round(timeRes * t);
 
 const getDuration = (env) => env.durationRand ? getRandDuration(env) : toTC(env.durationFixed);
 const randFn = (env) => env.durationDist === 'normal' ? randNormal : Math.random;
@@ -46,6 +47,12 @@ function build(assets, options) {
 
   if (env.shuffle) {
     assets = shuffle(assets, Date.now())
+  }
+
+  if (env.dryRun) {
+    console.log(assets);
+    console.log(`${assets.length} matches`);
+    process.exit(0);
   }
 
   // compose <resources>

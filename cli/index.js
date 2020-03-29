@@ -27,16 +27,16 @@ argv._.length === 0 && help();
 
 function help() {
   console.log(`
-Usage: slide-builder [options] files...
+Usage: slide-builder [options] files... > outfile.xml
 
 Options
-  --duration, -d N             - duration of each slide (default: 5 sec)
-  --transitionDuration, -t N   - duration of transition between each slide (default: 1 sec)
-                                 0 for no transition.
-  --randomize, -R [type]       - randomize duration of each slide (default: false)
-                                 [type] is the random distribution: uniform, normal (default: uniform)
-  --range, -r min,max          - range of random durations (requires -R) (default: 3,6 secs)
-  --name S                     - name of project
+  --slideDuration, -d N             - duration of each slide (default: 5 sec)
+  --transitionDuration, -t N        - duration of transition between each slide (default: 1 sec)
+                                        0 for no transition.
+  --durationRange, -r min,max,dist  - randomize duration within this range (secs) with distribution
+                                       uniform or normal (default: 3,6,uniform)
+  --name S                          - name of project
+  --sort [by]                       - sort slides (see advanced options)
 
   (Use --advanced to show less-used options)
 
@@ -89,19 +89,19 @@ More at https://github.com/isaacs/node-glob#glob-primer
 let toArr = (str) => str ? str.split(',') : [];
 
 let options = {};
+let durationRange = argv.durationRange || argv.r;
 Object.entries({
   projName: [argv.name],
-  durationFixed: [argv.duration || argv.d, (a) => parseFloat(a, 10)],
-  durationRange: [argv.range || argv.r, (a) => toArr(a).map(parseFloat)],
-  durationRand: [argv.randomize || argv.R, (a) => !!a],
-  durationDist: [argv.randomize || argv.R],
+  durationFixed: [argv.slideDuration || argv.d, (a) => parseFloat(a, 10)],
+  durationRange: [durationRange, (a) => toArr(a).splice(0,2).map(parseFloat)],
+  durationRand: [durationRange, (a) => !!a],
+  durationDist: [durationRange, (a) => a[0]],
   transitionDuration: [argv.transitionDuration || argv.t,,true],
-  shuffle: [argv.sort || argv.rsort, (a) => a === 'rand']
+  shuffle: [argv.sort || argv.rsort, (a) => a === 'rand'],
+  dryRun: [argv.dryRun]
 }).forEach(([key, [value, proc, falsyOK]]) => {
-  if (value || falsyOK) options[key] = proc ? proc(value) :  value;
+  if (value || falsyOK) options[key] = proc ? proc(value) : value;
 });
-
-if (options.durationDist === true) delete options.durationDist;
 
 // process file globs
 // const entries = fg.sync(['src/**/*.js', '!src/**/*.spec.js']);
@@ -157,12 +157,6 @@ if (argv.ext) {
   let exts = argv.ext.split(',');
   let extMatch = (path) => exts.filter(ext => path.endsWith('.' + ext)).length;
   assets = assets.filter(extMatch);
-}
-
-if (argv.dryRun) {
-  console.log(assets);
-  console.log(`${assets.length} matches`);
-  process.exit(0);
 }
 
 let out = builder(assets, options);
