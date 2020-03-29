@@ -78,6 +78,7 @@ files... can be one or more glob patterns, e.g., "pics/slideshow/** pics/summer/
 ```
 
 ### Change log
+- 1.1.1 Added npm keywords
 - 1.1.0 Refactored CLI arguments. Add `-R normal` and sort by name and extension.
 - 1.0.0 Initial version supporting fcpxml 1.8
 
