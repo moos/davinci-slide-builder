@@ -58,7 +58,7 @@ $ slide-builder -d 3 -t 1 --sort rand ~/pics/2005/img100*.jpg  ~/pics/2006/img10
 ```
 
 ### CLI options
-```shell
+```
 $ slide-builder
 Usage: slide-builder [options] files... > outfile.xml
 
@@ -66,8 +66,8 @@ Options
   --slideDuration, -d N             - duration of each slide (default: 5 sec)                               
   --transitionDuration, -t N        - duration of transition between each slide (default: 1 sec)            
                                         0 for no transition.                                                  
-  --durationRange, -r min,max,dist  - randomize duration within this range (secs) with distribution
-                                        uniform or normal (default: 3,6,uniform)
+  --randomDuration, -r min,max,dist - randomize slide duration within this range (secs) with distribution
+                                        "uniform" or "normal" (Gaussian) (default: 3,6,uniform)
   --name S                          - name of project                                                       
   --sort [by]                       - sort slides (see advanced options)
 
@@ -78,6 +78,7 @@ files... can be one or more glob patterns, e.g., "pics/slideshow/** pics/summer/
 ```
 
 ### Change log
+- 1.2.0 Rename CLI args and fix default handling
 - 1.1.1 Added npm keywords
 - 1.1.0 Refactored CLI arguments. Add `-R normal` and sort by name and extension.
 - 1.0.0 Initial version supporting fcpxml 1.8

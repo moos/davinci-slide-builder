@@ -50,6 +50,7 @@ function build(assets, options) {
   }
 
   if (env.dryRun) {
+    console.log(env);
     console.log(assets);
     console.log(`${assets.length} matches`);
     process.exit(0);

@@ -33,8 +33,8 @@ Options
   --slideDuration, -d N             - duration of each slide (default: 5 sec)
   --transitionDuration, -t N        - duration of transition between each slide (default: 1 sec)
                                         0 for no transition.
-  --durationRange, -r min,max,dist  - randomize duration within this range (secs) with distribution
-                                       uniform or normal (default: 3,6,uniform)
+  --randomDuration, -r min,max,dist - randomize slide duration within this range (secs) with distribution
+                                       "uniform" or "normal" (Gaussian) (default: 3,6,uniform)
   --name S                          - name of project
   --sort [by]                       - sort slides (see advanced options)
 
@@ -60,8 +60,8 @@ Advanced options:
                          name  - file name, excluding path
                          iname - file name, excluding path, case insensitive
                          ext   - extension only
-                         path  - file path, depth first
-                       * flat  - file path, breadth first (default)
+                         path  - compelte path, depth first
+                       * flat  - complete path, breadth first (default)
                          rand  - randomize
   --rsort [by]    - reverse sort order
   --dry-run       - just show selected files
@@ -86,21 +86,25 @@ More at https://github.com/isaacs/node-glob#glob-primer
   process.exit(0);
 }
 
-let toArr = (str) => str ? str.split(',') : [];
-
+let toArr = (str) => str && str.split ? str.split(',') : [];
 let options = {};
-let durationRange = argv.durationRange || argv.r;
+let randomDuration = argv.randomDuration || argv.r;
+
 Object.entries({
   projName: [argv.name],
   durationFixed: [argv.slideDuration || argv.d, (a) => parseFloat(a, 10)],
-  durationRange: [durationRange, (a) => toArr(a).splice(0,2).map(parseFloat)],
-  durationRand: [durationRange, (a) => !!a],
-  durationDist: [durationRange, (a) => a[0]],
-  transitionDuration: [argv.transitionDuration || argv.t,,true],
+  durationRand: [randomDuration, (a) => !!a],
+  durationRange: [randomDuration, (a) => toArr(a).slice(0,2).map(parseFloat)],
+  durationDist: [randomDuration, (a) => toArr(a)[2]],
+  transitionDuration: [argv.transitionDuration || argv.t, (a) => a && parseFloat(a, 10) ,true],
   shuffle: [argv.sort || argv.rsort, (a) => a === 'rand'],
   dryRun: [argv.dryRun]
 }).forEach(([key, [value, proc, falsyOK]]) => {
-  if (value || falsyOK) options[key] = proc ? proc(value) : value;
+  if (value || falsyOK) {
+    let val = proc ? proc(value) : value;
+    if (val !== undefined && val.length !== 0 &&
+      (val.length || !isNaN(val))) options[key] = val;
+  }
 });
 
 // process file globs
