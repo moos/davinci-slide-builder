@@ -26,7 +26,7 @@
     "array-sort": "^1.0.0",
     "fast-glob": "^2.2.6",
     "knuth-shuffle-seeded": "^1.0.6",
-    "yargs-parser": "^11.1.1"
+    "yargs-parser": "^19.0.4"
   },
   "devDependencies": {
     "fast-xml-parser": "^3.12.12",
